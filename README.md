@@ -708,11 +708,11 @@ Data Ingestion → Feature Engineering → Model Training → Validation → Reg
 🎯 Critical Improvements Require 
 Issue Analysis 
 Need more time to review why I am getting perfect f1 score in each model 
-Currently retiver solution missing whenuser get Query should get text based response 
+Currently retriever solution missing when user writes a query should get text based response 
 Severity Model (43.9% F1): The severity classification has only 5 classes (P0-P4), but the features may not be capturing severity-specific patterns effectively.
 Subcategory Model (64.6% F1): With 25 classes, this is inherently difficult for XGBoost alone.
 Feature Engineering: While comprehensive (2545 features), it's not optimized for specific prediction tasks.
 
-this workflow require lot of imporvement.
+
 ---
 
