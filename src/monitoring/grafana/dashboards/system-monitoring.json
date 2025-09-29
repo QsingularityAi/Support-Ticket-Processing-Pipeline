@@ -1,151 +1,134 @@
 {
-  "dashboard": {
-    "id": null,
-    "title": "System Components Monitoring",
-    "tags": ["system", "monitoring", "support-system"],
+  "id": null,
+  "title": "Intelligent Support System - System Monitoring",
+    "tags": ["support-system", "monitoring"],
+    "style": "dark",
     "timezone": "browser",
-    "schemaVersion": 16,
-    "version": 0,
-    "refresh": "5s",
     "panels": [
       {
         "id": 1,
-        "type": "graph",
-        "title": "HTTP Requests Over Time",
-        "gridPos": {
-          "x": 0,
-          "y": 0,
-          "w": 12,
-          "h": 8
-        },
+        "title": "API Request Rate",
+        "type": "stat",
         "targets": [
           {
-            "expr": "rate(http_requests_total[5m])",
-            "legendFormat": "{{method}} {{endpoint}} - {{status_code}}",
-            "refId": "A"
+            "expr": "rate(api_requests_total[5m])",
+            "legendFormat": "Requests/sec"
           }
         ],
-        "xaxis": {
-          "mode": "time"
-        },
-        "yaxes": [
-          {
-            "format": "short",
-            "label": "Requests per second"
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "reqps"
           }
-        ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
       },
       {
         "id": 2,
-        "type": "stat",
-        "title": "Current HTTP Requests In Progress",
-        "gridPos": {
-          "x": 12,
-          "y": 0,
-          "w": 6,
-          "h": 4
-        },
+        "title": "API Response Time",
+        "type": "timeseries",
         "targets": [
           {
-            "expr": "http_requests_in_progress",
-            "refId": "A"
+            "expr": "histogram_quantile(0.95, rate(api_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(api_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile"
           }
         ],
-        "options": {
-          "reduceOptions": {
-            "values": false,
-            "calcs": ["lastNotNull"]
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "s"
           }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
         }
       },
       {
         "id": 3,
-        "type": "graph",
-        "title": "HTTP Request Duration",
-        "gridPos": {
-          "x": 18,
-          "y": 0,
-          "w": 6,
-          "h": 8
-        },
+        "title": "Error Rate",
+        "type": "stat",
         "targets": [
           {
-            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
-            "legendFormat": "{{method}} {{endpoint}}",
-            "refId": "A"
+            "expr": "rate(api_requests_total{status_code!~\"2..\"}[5m]) / rate(api_requests_total[5m])",
+            "legendFormat": "Error Rate"
           }
         ],
-        "xaxis": {
-          "mode": "time"
-        },
-        "yaxes": [
-          {
-            "format": "s",
-            "label": "Duration (seconds)"
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 0.01
+                },
+                {
+                  "color": "red",
+                  "value": 0.05
+                }
+              ]
+            },
+            "unit": "percentunit"
           }
-        ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
       },
       {
         "id": 4,
-        "type": "piechart",
-        "title": "HTTP Requests by Status Code",
-        "gridPos": {
-          "x": 12,
-          "y": 4,
-          "w": 6,
-          "h": 4
-        },
+        "title": "Active Connections",
+        "type": "timeseries",
         "targets": [
           {
-            "expr": "http_requests_total",
-            "legendFormat": "{{status_code}}",
-            "refId": "A"
-          }
-        ]
-      },
-      {
-        "id": 5,
-        "type": "graph",
-        "title": "API Health Status",
-        "gridPos": {
-          "x": 0,
-          "y": 8,
-          "w": 24,
-          "h": 4
-        },
-        "targets": [
-          {
-            "expr": "up{job='support-system-api'}",
-            "legendFormat": "API Health",
-            "refId": "A"
-          },
-          {
-            "expr": "up{job='mlflow'}",
-            "legendFormat": "MLflow Health",
-            "refId": "B"
+            "expr": "api_active_connections",
+            "legendFormat": "Active Connections"
           }
         ],
-        "xaxis": {
-          "mode": "time"
-        },
-        "yaxes": [
-          {
-            "format": "short",
-            "label": "Up (1) / Down (0)"
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short"
           }
-        ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
       }
     ],
-    "templating": {
-      "list": []
-    },
     "time": {
-      "from": "now-6h",
+      "from": "now-1h",
       "to": "now"
     },
-    "timepicker": {
-      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
-    }
-  },
-  "overwrite": true
+    "refresh": "5s"
 }
