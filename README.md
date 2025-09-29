@@ -209,10 +209,10 @@ The system uses the provided `sample_tickets.json` file for training and indexin
 
 ```bash
 # Verify data file exists
-ls -la sample_tickets.json
+ls -la support_tickets.json
 
 # Check data format
-head -n 5 sample_tickets.json
+head -n 5 support_tickets.json
 ```
 
 ### Directory Structure
